@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+    options {
+        skipStagesAfterUnstable()
+    }
+    environment{
+        DIRECTORY_PATH="https://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@github.com/Shikhambryshikha/Jenkinsdemo.git"
+        TESTING_ENVIRONMENT="test"
+        PRODUCTION_ENVIRONMENT="Prod"
+    }
+    stages {
+        stage('Build') {
+    environment{
+        DIRECTORY_PATH="https://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@github.com/Shikhambryshikha/Jenkinsdemo.git"
+        TESTING_ENVIRONMENT="test"
+        PRODUCTION_ENVIRONMENT="Prod"
+    }
+            steps {
+               echo'fetch the source code from the directory path specified by the environment variable'
+                git url: "https://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@github.com/Shikhambryshikha/Jenkinsdemo.git",branch: 'main'
+                echo'compile the code and generate any necessary artifacts'
+            }
+        }
+        stage('Unit and Integration Tests'){
+            steps {
+                print("Unit Tests\n")
+                print("Integration Tests\n")
+            }
+            post{
+            always{
+            mail subject: "Confirmation mail",
+            to: "sc9967856@gmail.com",
+            body: "Tests have been successful"
+        }
+    }
+        }
+        stage('Code Analysis'){
+            steps {
+                echo 'check the quality of the code'
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'deploy the application to a testing environment specified by the environment variable'
+            }
+            post{
+            always{
+                emailext attachLog: true, body: 'Hi security tests have been successful', mimeType: 'text/plain', subject: 'Confirmation', to: 'sc9967856@gmail.com'
+        }
+    }
+        }
+        stage('Deploy to Staging'){
+            steps {
+                sleep 10
+            }
+        }
+        stage('Integration Tests on Staging'){
+            steps {
+              echo "Integration Tests"
+            }
+        }
+        stage('Deploy to Production'){
+            steps {
+                echo "Deploy to production"
+            }
+        }
+    }
+}
